@@ -14,7 +14,7 @@ type CreatePayoutRequest struct {
 }
 
 func (u *UseCase) CreatePayout(req CreatePayoutRequest) (*domain.Payout, error) {
-	partner, err := u.partnerRepo.GetByID(req.PartnerID)
+	partner, err := u.partnerRepo.GetPartnerByID(req.PartnerID)
 	if err != nil {
 		return nil, fmt.Errorf("repo.PartnerGetByID: %w", err)
 	}
@@ -28,7 +28,5 @@ func (u *UseCase) CreatePayout(req CreatePayoutRequest) (*domain.Payout, error) 
 	now := time.Now()
 	payout := domain.NewPayout(req.PartnerID, req.WithdrawInfo, req.Amount, now)
 
-	payout = u.payoutRepo.Save(payout)
-
-	return payout, nil
+	return u.payoutRepo.Save(payout), nil
 }

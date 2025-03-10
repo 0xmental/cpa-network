@@ -4,7 +4,7 @@ import (
 	"CPAPlatform/internal/domain"
 )
 
-func (r *Repo) GetByPartnerID(partnerID int64) []*domain.Payout {
+func (r *Repo) GetAllPayoutsByPartnerID(partnerID int64) []*domain.Payout {
 	var result []*domain.Payout
 	allPayouts := r.GetAll()
 

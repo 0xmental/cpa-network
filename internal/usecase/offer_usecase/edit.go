@@ -3,9 +3,11 @@ package offer_usecase
 import (
 	"CPAPlatform/internal/domain"
 	"fmt"
+	"time"
 )
 
-type UpdateOffer struct {
+type UpdateOfferReq struct {
+	OfferID        int64
 	TargetURL      string
 	Name           string
 	Description    string
@@ -14,20 +16,19 @@ type UpdateOffer struct {
 	Payout         map[string]int64
 }
 
-func (u *UseCase) EditOffer(upd UpdateOffer, offerID int64) (*domain.Offer, error) {
-	offer, err := u.repo.GetByID(offerID)
+func (u *UseCase) EditOffer(req UpdateOfferReq) (*domain.Offer, error) {
+	offer, err := u.repo.GetOfferByID(req.OfferID)
 	if err != nil {
 		return nil, fmt.Errorf("repo.GetByID: %w", err)
 	}
-	
-	offer.TargetUrl = upd.TargetURL
-	offer.Name = upd.Name
-	offer.Description = upd.Description
-	offer.RedirectDomain = upd.RedirectDomain
-	offer.ConversionType = upd.ConversionType
-	offer.Payout = upd.Payout
 
-	updatedOffer := u.repo.Update(offer, offerID)
+	offer.TargetUrl = req.TargetURL
+	offer.Name = req.Name
+	offer.Description = req.Description
+	offer.RedirectDomain = req.RedirectDomain
+	offer.ConversionType = req.ConversionType
+	offer.Payout = req.Payout
+	offer.UpdatedAt = time.Now()
 
-	return updatedOffer, nil
+	return u.repo.Update(offer), nil
 }

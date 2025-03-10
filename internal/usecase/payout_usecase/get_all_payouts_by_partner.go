@@ -2,8 +2,10 @@ package payout_usecase
 
 import "CPAPlatform/internal/domain"
 
-func (u *UseCase) GetAllPayoutsByPartnerID(partnerID int64) []*domain.Payout {
-	payouts := u.payoutRepo.GetByPartnerID(partnerID)
+type GetPayoutsByPartnerReq struct {
+	PartnerID int64
+}
 
-	return payouts
+func (u *UseCase) GetAllPayoutsByPartnerID(req GetPayoutsByPartnerReq) []*domain.Payout {
+	return u.payoutRepo.GetAllPayoutsByPartnerID(req.PartnerID)
 }

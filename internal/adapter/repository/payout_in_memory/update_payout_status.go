@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func (r *Repo) Update(payoutID int64, status domain.PayoutStatus) (*domain.Payout, error) {
+func (r *Repo) UpdatePayoutStatus(payoutID int64, status domain.PayoutStatus) (*domain.Payout, error) {
 	payout, err := r.GetPayoutByID(payoutID)
 	if err != nil {
 		return nil, fmt.Errorf("repo.GetPayoutByID: %w", err)

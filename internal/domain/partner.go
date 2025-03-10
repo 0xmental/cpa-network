@@ -55,7 +55,6 @@ func NewPartner(email, pass string, contactInfo ContactInfo, withdrawInfo *Withd
 func (p *Partner) Activate(activatedAt time.Time) {
 	p.IsActive = true
 	p.UpdatedAt = activatedAt
-
 }
 
 func (p *Partner) DeductBalance(amount int64) error {
@@ -69,4 +68,8 @@ func (p *Partner) DeductBalance(amount int64) error {
 	p.Balance -= amount
 
 	return nil
+}
+
+func (p *Partner) AddBalance(amount int64) {
+	p.Balance += amount
 }

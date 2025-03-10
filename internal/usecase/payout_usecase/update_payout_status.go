@@ -5,8 +5,13 @@ import (
 	"fmt"
 )
 
-func (u *UseCase) UpdatePayoutStatus(payoutID int64, status domain.PayoutStatus) (*domain.Payout, error) {
-	result, err := u.UpdatePayoutStatus(payoutID, status)
+type UpdatePayoutReq struct {
+	PayoutID int64
+	Status   domain.PayoutStatus
+}
+
+func (u *UseCase) UpdatePayoutStatus(req UpdatePayoutReq) (*domain.Payout, error) {
+	result, err := u.payoutRepo.UpdatePayoutStatus(req.PayoutID, req.Status)
 	if err != nil {
 		return nil, fmt.Errorf("repo.GetPayoutByID: %w", err)
 	}

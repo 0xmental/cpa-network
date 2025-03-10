@@ -5,6 +5,10 @@ import (
 	"fmt"
 )
 
+type GetOfferReq struct {
+	OfferID   int64
+	PartnerID int64
+}
 type GetOfferResponse struct {
 	ID             int64
 	Name           string
@@ -15,13 +19,13 @@ type GetOfferResponse struct {
 	TrackingURL    string
 }
 
-func (u *UseCase) GetOffer(offerID, partnerID int64) (*GetOfferResponse, error) {
-	offer, err := u.repo.GetByID(offerID)
+func (u *UseCase) GetOffer(req GetOfferReq) (*GetOfferResponse, error) {
+	offer, err := u.repo.GetOfferByID(req.OfferID)
 	if err != nil {
 		return nil, fmt.Errorf("repo.GetByID: %w", err)
 	}
 
-	trackingURL := fmt.Sprintf("https://%s/click?offer=%d&partner=%d", offer.RedirectDomain, offer.ID, partnerID)
+	trackingURL := fmt.Sprintf("https://%s/click?offer=%d&partner=%d", offer.RedirectDomain, offer.ID, req.PartnerID)
 
 	return &GetOfferResponse{
 		ID:             offer.ID,

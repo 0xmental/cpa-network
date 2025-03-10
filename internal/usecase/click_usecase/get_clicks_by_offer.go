@@ -2,14 +2,12 @@ package click_usecase
 
 import (
 	"CPAPlatform/internal/domain"
-	"fmt"
 )
 
-func (u *UseCase) GetClicksByOffer(offerID int64) ([]*domain.Click, error) {
-	_, err := u.repoOffer.GetByID(offerID)
-	if err != nil {
-		return nil, fmt.Errorf("repoOffer.GetByID: %w", err)
-	}
+type GetClicksByOfferReq struct {
+	OfferID int64
+}
 
-	return u.repoClick.GetByOffer(offerID), nil
+func (u *UseCase) GetAllClicksByOffer(req GetClicksByOfferReq) []*domain.Click {
+	return u.repoClick.GetAllClicksByOffer(req.OfferID)
 }

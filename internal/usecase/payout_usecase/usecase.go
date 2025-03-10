@@ -1,16 +1,27 @@
 package payout_usecase
 
-import (
-	"CPAPlatform/internal/adapter/repository/partner_in_memory"
-	"CPAPlatform/internal/adapter/repository/payout_in_memory"
+import "CPAPlatform/internal/domain"
+
+type (
+	UseCase struct {
+		payoutRepo  repoPayout
+		partnerRepo repoPartner
+	}
+
+	repoPayout interface {
+		UpdatePayoutStatus(payoutID int64, status domain.PayoutStatus) (*domain.Payout, error)
+		GetPayoutByID(payoutID int64) (*domain.Payout, error)
+		GetAllPayoutsByPartnerID(partnerID int64) []*domain.Payout
+		GetAllPayouts() []*domain.Payout
+		Save(payout *domain.Payout) *domain.Payout
+	}
+	
+	repoPartner interface {
+		GetPartnerByID(partnerID int64) (*domain.Partner, error)
+	}
 )
 
-type UseCase struct {
-	payoutRepo  *payout_in_memory.Repo
-	partnerRepo *partner_in_memory.Repo
-}
-
-func NewUseCase(payoutRepo *payout_in_memory.Repo, partnerRepo *partner_in_memory.Repo) *UseCase {
+func NewUseCase(payoutRepo repoPayout, partnerRepo repoPartner) *UseCase {
 	return &UseCase{
 		payoutRepo:  payoutRepo,
 		partnerRepo: partnerRepo,

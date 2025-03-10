@@ -3,27 +3,28 @@ package partner_usecase
 import (
 	"CPAPlatform/internal/domain"
 	"fmt"
+	"time"
 )
 
-type UpdateInfo struct {
+type UpdateInfoReq struct {
+	PartnerID    int64
 	Pass         string
 	ContactInfo  domain.ContactInfo
 	WithdrawInfo *domain.WithdrawInfo
 	PostbackURL  *string
 }
 
-func (u *UseCase) UpdatePartnerInfo(upd UpdateInfo, partnerID int64) (*domain.Partner, error) {
-	partner, err := u.repo.GetByID(partnerID)
+func (u *UseCase) UpdatePartnerInfo(req UpdateInfoReq) (*domain.Partner, error) {
+	partner, err := u.repo.GetPartnerByID(req.PartnerID)
 	if err != nil {
 		return nil, fmt.Errorf("repo.GetByID: %w", err)
 	}
 
-	partner.Pass = upd.Pass
-	partner.ContactInfo = upd.ContactInfo
-	partner.WithdrawInfo = upd.WithdrawInfo
-	partner.PostbackURL = upd.PostbackURL
+	partner.Pass = req.Pass
+	partner.ContactInfo = req.ContactInfo
+	partner.WithdrawInfo = req.WithdrawInfo
+	partner.PostbackURL = req.PostbackURL
+	partner.UpdatedAt = time.Now()
 
-	updatedInfo := u.repo.Update(partner, partnerID)
-
-	return updatedInfo, nil
+	return u.repo.Update(partner, req.PartnerID), nil
 }

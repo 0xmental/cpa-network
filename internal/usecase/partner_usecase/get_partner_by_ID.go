@@ -5,8 +5,12 @@ import (
 	"fmt"
 )
 
-func (u *UseCase) GetPartnerByID(partnerID int64) (*domain.Partner, error) {
-	partner, err := u.repo.GetByID(partnerID)
+type GetPartnerReq struct {
+	PartnerID int64
+}
+
+func (u *UseCase) GetPartnerByID(req GetPartnerReq) (*domain.Partner, error) {
+	partner, err := u.repo.GetPartnerByID(req.PartnerID)
 	if err != nil {
 		return nil, fmt.Errorf("repo.GetPartnerByID: %w", err)
 	}
