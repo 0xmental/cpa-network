@@ -20,7 +20,7 @@ type GetOfferResponse struct {
 }
 
 func (u *UseCase) GetOffer(req GetOfferReq) (*GetOfferResponse, error) {
-	offer, err := u.repo.GetOfferByID(req.OfferID)
+	offer, err := u.offerRepo.GetOfferByID(req.OfferID)
 	if err != nil {
 		return nil, fmt.Errorf("repo.GetByID: %w", err)
 	}

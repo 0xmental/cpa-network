@@ -15,7 +15,7 @@ type UpdateInfoReq struct {
 }
 
 func (u *UseCase) UpdatePartnerInfo(req UpdateInfoReq) (*domain.Partner, error) {
-	partner, err := u.repo.GetPartnerByID(req.PartnerID)
+	partner, err := u.partnerRepo.GetPartnerByID(req.PartnerID)
 	if err != nil {
 		return nil, fmt.Errorf("repo.GetByID: %w", err)
 	}
@@ -26,5 +26,5 @@ func (u *UseCase) UpdatePartnerInfo(req UpdateInfoReq) (*domain.Partner, error) 
 	partner.PostbackURL = req.PostbackURL
 	partner.UpdatedAt = time.Now()
 
-	return u.repo.Update(partner, req.PartnerID), nil
+	return u.partnerRepo.Update(partner, req.PartnerID), nil
 }

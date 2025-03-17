@@ -17,7 +17,7 @@ type UpdateOfferReq struct {
 }
 
 func (u *UseCase) EditOffer(req UpdateOfferReq) (*domain.Offer, error) {
-	offer, err := u.repo.GetOfferByID(req.OfferID)
+	offer, err := u.offerRepo.GetOfferByID(req.OfferID)
 	if err != nil {
 		return nil, fmt.Errorf("repo.GetByID: %w", err)
 	}
@@ -30,5 +30,5 @@ func (u *UseCase) EditOffer(req UpdateOfferReq) (*domain.Offer, error) {
 	offer.Payout = req.Payout
 	offer.UpdatedAt = time.Now()
 
-	return u.repo.Update(offer), nil
+	return u.offerRepo.Update(offer), nil
 }
