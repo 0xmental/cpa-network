@@ -12,7 +12,6 @@ var ErrOfferInactive = errors.New("this offer is inactive")
 
 type CreateConversionRequest struct {
 	ClickID string
-	Payout  int64
 }
 
 func (u *UseCase) CreateConversion(req CreateConversionRequest) (*domain.Conversion, error) {
@@ -42,7 +41,7 @@ func (u *UseCase) CreateConversion(req CreateConversionRequest) (*domain.Convers
 	partner.AddBalance(payout)
 
 	now := time.Now()
-	conversion := domain.NewConversion(req.ClickID, payout, now)
+	conversion := domain.NewConversion(req.ClickID, payout, partner.ID, offer.ID, now)
 
 	conversion = u.repoConversion.Save(conversion)
 

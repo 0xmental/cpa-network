@@ -19,5 +19,5 @@ func (u *UseCase) CreateOffer(req CreateOfferRequest) *domain.Offer {
 	now := time.Now()
 	offer := domain.NewOffer(req.TargetURL, req.Name, req.Description, req.RedirectDomain, req.ConversionType, req.Payout, now)
 
-	return u.repo.Save(offer)
+	return u.offerRepo.Save(offer)
 }

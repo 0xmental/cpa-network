@@ -23,5 +23,5 @@ func (u *UseCase) CreatePartner(req CreatePartnerRequest) (*domain.Partner, erro
 		return nil, fmt.Errorf("domain.NewPartner: %w", err)
 	}
 
-	return u.repo.Save(partner), nil
+	return u.partnerRepo.Save(partner), nil
 }

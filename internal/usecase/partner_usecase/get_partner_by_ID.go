@@ -10,7 +10,7 @@ type GetPartnerReq struct {
 }
 
 func (u *UseCase) GetPartnerByID(req GetPartnerReq) (*domain.Partner, error) {
-	partner, err := u.repo.GetPartnerByID(req.PartnerID)
+	partner, err := u.partnerRepo.GetPartnerByID(req.PartnerID)
 	if err != nil {
 		return nil, fmt.Errorf("repo.GetPartnerByID: %w", err)
 	}

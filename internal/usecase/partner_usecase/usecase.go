@@ -6,9 +6,9 @@ import (
 
 type (
 	UseCase struct {
-		repo repo
+		partnerRepo repoPartner
 	}
-	repo interface {
+	repoPartner interface {
 		GetPartnerByID(partnerID int64) (*domain.Partner, error)
 		GetAllPartners() []*domain.Partner
 		Update(partner *domain.Partner, partnerID int64) *domain.Partner
@@ -16,8 +16,8 @@ type (
 	}
 )
 
-func NewUseCase(repo repo) *UseCase {
+func NewUseCase(partnerRepo repoPartner) *UseCase {
 	return &UseCase{
-		repo: repo,
+		partnerRepo: partnerRepo,
 	}
 }

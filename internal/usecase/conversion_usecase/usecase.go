@@ -27,6 +27,8 @@ type (
 	conversionRepo interface {
 		Save(conversion *domain.Conversion) *domain.Conversion
 		GetAllConversions() []*domain.Conversion
+		GetAllConversionsByOffer(offerID int64) []*domain.Conversion
+		GetAllConversionsByPartner(partnerID int64) []*domain.Conversion
 	}
 )
 

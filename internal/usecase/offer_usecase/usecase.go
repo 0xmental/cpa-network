@@ -4,10 +4,10 @@ import "CPAPlatform/internal/domain"
 
 type (
 	UseCase struct {
-		repo repo
+		offerRepo repoOffer
 	}
 
-	repo interface {
+	repoOffer interface {
 		GetAllOffers() []*domain.Offer
 		GetOfferByID(offerID int64) (*domain.Offer, error)
 		Save(offer *domain.Offer) *domain.Offer
@@ -15,8 +15,8 @@ type (
 	}
 )
 
-func NewUseCase(repo repo) *UseCase {
+func NewUseCase(offerRepo repoOffer) *UseCase {
 	return &UseCase{
-		repo: repo,
+		offerRepo: offerRepo,
 	}
 }
