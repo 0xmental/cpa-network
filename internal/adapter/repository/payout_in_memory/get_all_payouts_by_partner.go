@@ -6,7 +6,7 @@ import (
 
 func (r *Repo) GetAllPayoutsByPartnerID(partnerID int64) []*domain.Payout {
 	var result []*domain.Payout
-	allPayouts := r.GetAll()
+	allPayouts := r.GetAllPayouts()
 
 	for _, payout := range allPayouts {
 		if payout.PartnerID == partnerID {

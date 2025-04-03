@@ -11,10 +11,12 @@ type UpdatePayoutReq struct {
 }
 
 func (u *UseCase) UpdatePayoutStatus(req UpdatePayoutReq) (*domain.Payout, error) {
-	result, err := u.payoutRepo.UpdatePayoutStatus(req.PayoutID, req.Status)
+	payout, err := u.payoutRepo.GetPayoutByID(req.PayoutID)
 	if err != nil {
 		return nil, fmt.Errorf("repo.GetPayoutByID: %w", err)
 	}
+	payout.Status = req.Status
+	payout.UpdateAt = u.timer.Now()
 
-	return result, err
+	return u.payoutRepo.UpdatePayoutStatus(payout), nil
 }

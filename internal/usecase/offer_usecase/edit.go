@@ -3,7 +3,6 @@ package offer_usecase
 import (
 	"CPAPlatform/internal/domain"
 	"fmt"
-	"time"
 )
 
 type UpdateOfferReq struct {
@@ -28,7 +27,7 @@ func (u *UseCase) EditOffer(req UpdateOfferReq) (*domain.Offer, error) {
 	offer.RedirectDomain = req.RedirectDomain
 	offer.ConversionType = req.ConversionType
 	offer.Payout = req.Payout
-	offer.UpdatedAt = time.Now()
+	offer.UpdatedAt = u.timer.Now()
 
 	return u.offerRepo.Update(offer), nil
 }

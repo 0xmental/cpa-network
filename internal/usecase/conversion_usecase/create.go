@@ -4,7 +4,6 @@ import (
 	"CPAPlatform/internal/domain"
 	"errors"
 	"fmt"
-	"time"
 )
 
 var ErrPayoutNotDefined = errors.New("payout is not defined for the specified country")
@@ -40,7 +39,7 @@ func (u *UseCase) CreateConversion(req CreateConversionRequest) (*domain.Convers
 	}
 	partner.AddBalance(payout)
 
-	now := time.Now()
+	now := u.timer.Now()
 	conversion := domain.NewConversion(req.ClickID, payout, partner.ID, offer.ID, now)
 
 	conversion = u.repoConversion.Save(conversion)

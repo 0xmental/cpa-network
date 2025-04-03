@@ -2,16 +2,10 @@ package payout_in_memory
 
 import (
 	"CPAPlatform/internal/domain"
-	"fmt"
 )
 
-func (r *Repo) UpdatePayoutStatus(payoutID int64, status domain.PayoutStatus) (*domain.Payout, error) {
-	payout, err := r.GetPayoutByID(payoutID)
-	if err != nil {
-		return nil, fmt.Errorf("repo.GetPayoutByID: %w", err)
-	}
+func (r *Repo) UpdatePayoutStatus(payout *domain.Payout) *domain.Payout {
+	r.data[payout.ID] = payout
 
-	payout.Status = status
-
-	return payout, nil
+	return payout
 }

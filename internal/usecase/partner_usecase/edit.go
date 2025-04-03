@@ -3,7 +3,6 @@ package partner_usecase
 import (
 	"CPAPlatform/internal/domain"
 	"fmt"
-	"time"
 )
 
 type UpdateInfoReq struct {
@@ -24,7 +23,7 @@ func (u *UseCase) UpdatePartnerInfo(req UpdateInfoReq) (*domain.Partner, error) 
 	partner.ContactInfo = req.ContactInfo
 	partner.WithdrawInfo = req.WithdrawInfo
 	partner.PostbackURL = req.PostbackURL
-	partner.UpdatedAt = time.Now()
+	partner.UpdatedAt = u.timer.Now()
 
-	return u.partnerRepo.Update(partner, req.PartnerID), nil
+	return u.partnerRepo.Update(partner), nil
 }

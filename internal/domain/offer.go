@@ -44,11 +44,3 @@ func NewOffer(
 		UpdatedAt:      time,
 	}
 }
-
-func NewRedirectLink(domain string, partnerID, offerID int64) *RedirectLink {
-	return &RedirectLink{
-		Domain:    domain,
-		PartnerID: partnerID,
-		OfferID:   offerID,
-	}
-}

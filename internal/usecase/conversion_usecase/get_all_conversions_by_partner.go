@@ -9,5 +9,5 @@ type GetConversionsByPartnerReq struct {
 }
 
 func (u *UseCase) GetAllConversionsByPartner(req GetConversionsByPartnerReq) []*domain.Conversion {
-	return u.repoConversion.GetAllConversionsByOffer(req.PartnerID)
+	return u.repoConversion.GetAllConversionsByPartner(req.PartnerID)
 }
