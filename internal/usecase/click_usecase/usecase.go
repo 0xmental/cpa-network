@@ -2,21 +2,20 @@ package click_usecase
 
 import (
 	"CPAPlatform/internal/domain"
+	"CPAPlatform/internal/domain/dto"
 	"time"
 )
 
 type (
 	UseCase struct {
-		repoClick   clickRepo
-		repoPartner partnerRepo
-		repoOffer   offerRepo
-		timer       timer
+		repoClick        clickRepo
+		repoPartner      partnerRepo
+		repoOffer        offerRepo
+		timer            timer
+		clickIDGenerator func(offerID, partnerID int64, ip, userAgent string) string
 	}
 	clickRepo interface {
-		GetAllClicksByPartner(partnerID int64) []*domain.Click
-		GetAllClicksByOffer(offerID int64) []*domain.Click
-		GetByClickID(clickID string) (*domain.Click, error)
-		GetAllClicks() []*domain.Click
+		GetAllClicks(filter dto.ClickFilter) []*domain.Click
 		IsUnique(clickID string) bool
 		Save(click *domain.Click) *domain.Click
 	}

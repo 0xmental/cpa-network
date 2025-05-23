@@ -2,6 +2,7 @@ package conversion_usecase
 
 import (
 	"CPAPlatform/internal/domain"
+	"CPAPlatform/internal/domain/dto"
 	"time"
 )
 
@@ -15,7 +16,7 @@ type (
 	}
 
 	clickRepo interface {
-		GetByClickID(clickID string) (*domain.Click, error)
+		GetAllClicks(filter dto.ClickFilter) []*domain.Click
 	}
 
 	offerRepo interface {
@@ -28,9 +29,7 @@ type (
 
 	conversionRepo interface {
 		Save(conversion *domain.Conversion) *domain.Conversion
-		GetAllConversions() []*domain.Conversion
-		GetAllConversionsByOffer(offerID int64) []*domain.Conversion
-		GetAllConversionsByPartner(partnerID int64) []*domain.Conversion
+		GetAllConversions(filter dto.ConversionFilter) []*domain.Conversion
 	}
 
 	timer interface {

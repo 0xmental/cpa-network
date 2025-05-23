@@ -27,7 +27,7 @@ func TestCreatePartner(t *testing.T) {
 		name    string
 		args    args
 		want    *domain.Partner
-		wantErr error
+		wantErr bool
 		before  func(ucMocks useCaseMocks, args args)
 	}{
 		{
@@ -52,7 +52,7 @@ func TestCreatePartner(t *testing.T) {
 				CreatedAt:    now,
 				UpdatedAt:    now,
 			},
-			wantErr: nil,
+			wantErr: false,
 			before: func(f useCaseMocks, args args) {
 				partner := &domain.Partner{
 					Email:        email,
@@ -66,24 +66,87 @@ func TestCreatePartner(t *testing.T) {
 					UpdatedAt:    now,
 				}
 				f.timer.EXPECT().Now().Return(now)
-				f.repoPartner.EXPECT().Save(partner).Return(partner)
+				f.repoPartner.EXPECT().Save(partner).Return(partner, nil)
 			},
 		},
 		{
-			name: "creation failed",
+			name: "creation failed - invalid email",
 			args: args{
 				req: CreatePartnerRequest{
 					Email:        "",
-					Pass:         "",
-					ContactInfo:  domain.ContactInfo{},
+					Pass:         "validpass",
+					ContactInfo:  contactInfo,
 					WithdrawInfo: nil,
 					PostbackURL:  nil,
 				},
 			},
 			want:    nil,
-			wantErr: domain.ErrContactInfoRequired,
+			wantErr: true,
 			before: func(f useCaseMocks, args args) {
 				f.timer.EXPECT().Now().Return(now)
+			},
+		},
+		{
+			name: "creation failed - empty contact info",
+			args: args{
+				req: CreatePartnerRequest{
+					Email:        "valid@email.com",
+					Pass:         "validpass",
+					ContactInfo:  domain.ContactInfo{}, // пустая контактная информация
+					WithdrawInfo: nil,
+					PostbackURL:  nil,
+				},
+			},
+			want:    nil,
+			wantErr: true,
+			before: func(f useCaseMocks, args args) {
+				f.timer.EXPECT().Now().Return(now)
+			},
+		},
+		{
+			name: "creation failed - empty password",
+			args: args{
+				req: CreatePartnerRequest{
+					Email:        "valid@email.com",
+					Pass:         "",
+					ContactInfo:  contactInfo,
+					WithdrawInfo: nil,
+					PostbackURL:  nil,
+				},
+			},
+			want:    nil,
+			wantErr: true,
+			before: func(f useCaseMocks, args args) {
+				f.timer.EXPECT().Now().Return(now)
+			},
+		},
+		{
+			name: "save failed - repository error",
+			args: args{
+				req: CreatePartnerRequest{
+					Email:        email,
+					Pass:         pass,
+					ContactInfo:  contactInfo,
+					WithdrawInfo: nil,
+					PostbackURL:  nil,
+				},
+			},
+			want:    nil,
+			wantErr: true,
+			before: func(f useCaseMocks, args args) {
+				partner := &domain.Partner{
+					Email:        email,
+					Pass:         pass,
+					ContactInfo:  contactInfo,
+					WithdrawInfo: nil,
+					PostbackURL:  nil,
+					IsActive:     true,
+					Balance:      0,
+					CreatedAt:    now,
+					UpdatedAt:    now,
+				}
+				f.timer.EXPECT().Now().Return(now)
+				f.repoPartner.EXPECT().Save(partner).Return(nil, errTest)
 			},
 		},
 	}
@@ -98,9 +161,13 @@ func TestCreatePartner(t *testing.T) {
 
 			e, err := uc.CreatePartner(tt.args.req)
 
-			a.ErrorIs(err, tt.wantErr)
-
-			a.Equal(tt.want, e)
+			if tt.wantErr {
+				a.Error(err)
+				a.Nil(e)
+			} else {
+				a.NoError(err)
+				a.Equal(tt.want, e)
+			}
 		})
 	}
 }

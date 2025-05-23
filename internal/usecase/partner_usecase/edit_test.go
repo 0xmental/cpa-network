@@ -1,7 +1,7 @@
 package partner_usecase
 
 import (
-	"CPAPlatform/internal/adapter/repository/partner_in_memory"
+	"CPAPlatform/internal/adapter/repository/in_memory/partner_in_memory"
 	"CPAPlatform/internal/domain"
 	"github.com/stretchr/testify/assert"
 	"testing"

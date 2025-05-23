@@ -14,7 +14,7 @@ type (
 		GetPartnerByID(partnerID int64) (*domain.Partner, error)
 		GetAllPartners() []*domain.Partner
 		Update(partner *domain.Partner) *domain.Partner
-		Save(partner *domain.Partner) *domain.Partner
+		Save(partner *domain.Partner) (*domain.Partner, error)
 	}
 
 	timer interface {

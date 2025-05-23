@@ -1,7 +1,7 @@
 package offer_usecase
 
 import (
-	"CPAPlatform/internal/adapter/repository/offer_in_memory"
+	"CPAPlatform/internal/adapter/repository/in_memory/offer_in_memory"
 	"CPAPlatform/internal/domain"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -116,13 +116,10 @@ func TestEditOffer(t *testing.T) {
 			uc, ucMocks := makeServiceWithMocks(t)
 			tt.before(ucMocks, tt.args)
 
-			// Вызываем метод EditOffer
 			e, err := uc.EditOffer(tt.args.req)
 
-			// Проверяем ошибку
 			a.ErrorIs(err, tt.wantErr)
 
-			// Проверяем результат
 			a.Equal(tt.want, e)
 		})
 	}

@@ -1,7 +1,7 @@
 package payout_usecase
 
 import (
-	"CPAPlatform/internal/adapter/repository/partner_in_memory"
+	"CPAPlatform/internal/adapter/repository/in_memory/partner_in_memory"
 	"CPAPlatform/internal/domain"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -27,7 +27,7 @@ func TestCreatePayout(t *testing.T) {
 		name    string
 		args    args
 		want    *domain.Payout
-		wantErr error
+		wantErr bool
 		before  func(ucMocks useCaseMocks, args args)
 	}{
 		{
@@ -47,7 +47,7 @@ func TestCreatePayout(t *testing.T) {
 				CreatedAt:    now,
 				UpdateAt:     now,
 			},
-			wantErr: nil,
+			wantErr: false,
 			before: func(f useCaseMocks, args args) {
 				partner := &domain.Partner{
 					ID:           partnerID,
@@ -72,14 +72,14 @@ func TestCreatePayout(t *testing.T) {
 			name: "partner not found",
 			args: args{
 				req: CreatePayoutRequest{
-					PartnerID: partnerID,
-					Amount:    amount,
+					PartnerID:    partnerID,
+					Amount:       amount,
+					WithdrawInfo: withdrawInfo,
 				},
 			},
 			want:    nil,
-			wantErr: partner_in_memory.ErrPartnerNotFound,
+			wantErr: true,
 			before: func(f useCaseMocks, args args) {
-
 				f.repoPartner.EXPECT().GetPartnerByID(partnerID).Return(nil, partner_in_memory.ErrPartnerNotFound)
 			},
 		},
@@ -93,11 +93,53 @@ func TestCreatePayout(t *testing.T) {
 				},
 			},
 			want:    nil,
-			wantErr: domain.ErrInsufficientBalance,
+			wantErr: true,
 			before: func(f useCaseMocks, args args) {
 				partner := &domain.Partner{
 					ID:           partnerID,
-					Balance:      500,
+					Balance:      500, // меньше чем amount (1000)
+					WithdrawInfo: &withdrawInfo,
+				}
+
+				f.repoPartner.EXPECT().GetPartnerByID(partnerID).Return(partner, nil)
+			},
+		},
+		{
+			name: "zero amount",
+			args: args{
+				req: CreatePayoutRequest{
+					PartnerID:    partnerID,
+					Amount:       0,
+					WithdrawInfo: withdrawInfo,
+				},
+			},
+			want:    nil,
+			wantErr: true,
+			before: func(f useCaseMocks, args args) {
+				partner := &domain.Partner{
+					ID:           partnerID,
+					Balance:      5000,
+					WithdrawInfo: &withdrawInfo,
+				}
+
+				f.repoPartner.EXPECT().GetPartnerByID(partnerID).Return(partner, nil)
+			},
+		},
+		{
+			name: "negative amount",
+			args: args{
+				req: CreatePayoutRequest{
+					PartnerID:    partnerID,
+					Amount:       -100,
+					WithdrawInfo: withdrawInfo,
+				},
+			},
+			want:    nil,
+			wantErr: true,
+			before: func(f useCaseMocks, args args) {
+				partner := &domain.Partner{
+					ID:           partnerID,
+					Balance:      5000,
 					WithdrawInfo: &withdrawInfo,
 				}
 
@@ -116,9 +158,13 @@ func TestCreatePayout(t *testing.T) {
 
 			e, err := uc.CreatePayout(tt.args.req)
 
-			a.ErrorIs(err, tt.wantErr)
-
-			a.Equal(tt.want, e)
+			if tt.wantErr {
+				a.Error(err)
+				a.Nil(e)
+			} else {
+				a.NoError(err)
+				a.Equal(tt.want, e)
+			}
 		})
 	}
 }

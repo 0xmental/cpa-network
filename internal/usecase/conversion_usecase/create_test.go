@@ -2,6 +2,7 @@ package conversion_usecase
 
 import (
 	"CPAPlatform/internal/domain"
+	"CPAPlatform/internal/domain/dto"
 	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
@@ -27,10 +28,11 @@ func TestCreateConversion(t *testing.T) {
 		name    string
 		args    args
 		want    *domain.Conversion
-		wantErr error
+		wantErr bool
 		before  func(ucMocks useCaseMocks, args args)
 	}{
-		{name: "success creation",
+		{
+			name: "success creation",
 			args: args{
 				req: CreateConversionRequest{
 					ClickID: clickID,
@@ -43,6 +45,7 @@ func TestCreateConversion(t *testing.T) {
 				PartnerID: partnerID,
 				CreatedAt: now,
 			},
+			wantErr: false,
 			before: func(f useCaseMocks, args args) {
 				conversion := &domain.Conversion{
 					ClickID:   clickID,
@@ -69,10 +72,135 @@ func TestCreateConversion(t *testing.T) {
 
 				f.timer.EXPECT().Now().Return(now)
 
-				f.repoClick.EXPECT().GetByClickID(clickID).Return(click, nil)
+				f.repoClick.EXPECT().GetAllClicks(dto.ClickFilter{
+					ClickID: clickID,
+				}).Return([]*domain.Click{click})
 				f.repoOffer.EXPECT().GetOfferByID(offerID).Return(offer, nil)
 				f.repoPartner.EXPECT().GetPartnerByID(partnerID).Return(partner, nil)
 				f.repoConversion.EXPECT().Save(conversion).Return(conversion)
+			},
+		},
+		{
+			name: "click not found",
+			args: args{
+				req: CreateConversionRequest{
+					ClickID: clickID,
+				},
+			},
+			want:    nil,
+			wantErr: true,
+			before: func(f useCaseMocks, args args) {
+				f.repoClick.EXPECT().GetAllClicks(dto.ClickFilter{
+					ClickID: clickID,
+				}).Return([]*domain.Click{})
+			},
+		},
+		{
+			name: "offer inactive",
+			args: args{
+				req: CreateConversionRequest{
+					ClickID: clickID,
+				},
+			},
+			want:    nil,
+			wantErr: true,
+			before: func(f useCaseMocks, args args) {
+				click := &domain.Click{
+					ClickID:   clickID,
+					OfferID:   offerID,
+					Country:   country,
+					PartnerID: partnerID,
+				}
+				offer := &domain.Offer{
+					ID:       offerID,
+					Payout:   payout,
+					IsActive: false, // inactive offer
+				}
+
+				f.repoClick.EXPECT().GetAllClicks(dto.ClickFilter{
+					ClickID: clickID,
+				}).Return([]*domain.Click{click})
+				f.repoOffer.EXPECT().GetOfferByID(offerID).Return(offer, nil)
+			},
+		},
+		{
+			name: "payout not defined for country",
+			args: args{
+				req: CreateConversionRequest{
+					ClickID: clickID,
+				},
+			},
+			want:    nil,
+			wantErr: true,
+			before: func(f useCaseMocks, args args) {
+				click := &domain.Click{
+					ClickID:   clickID,
+					OfferID:   offerID,
+					Country:   "US", // different country
+					PartnerID: partnerID,
+				}
+				offer := &domain.Offer{
+					ID:       offerID,
+					Payout:   payout, // only has "RU"
+					IsActive: true,
+				}
+
+				f.repoClick.EXPECT().GetAllClicks(dto.ClickFilter{
+					ClickID: clickID,
+				}).Return([]*domain.Click{click})
+				f.repoOffer.EXPECT().GetOfferByID(offerID).Return(offer, nil)
+			},
+		},
+		{
+			name: "offer not found error",
+			args: args{
+				req: CreateConversionRequest{
+					ClickID: clickID,
+				},
+			},
+			want:    nil,
+			wantErr: true,
+			before: func(f useCaseMocks, args args) {
+				click := &domain.Click{
+					ClickID:   clickID,
+					OfferID:   offerID,
+					Country:   country,
+					PartnerID: partnerID,
+				}
+
+				f.repoClick.EXPECT().GetAllClicks(dto.ClickFilter{
+					ClickID: clickID,
+				}).Return([]*domain.Click{click})
+				f.repoOffer.EXPECT().GetOfferByID(offerID).Return(nil, errTest)
+			},
+		},
+		{
+			name: "partner not found error",
+			args: args{
+				req: CreateConversionRequest{
+					ClickID: clickID,
+				},
+			},
+			want:    nil,
+			wantErr: true,
+			before: func(f useCaseMocks, args args) {
+				click := &domain.Click{
+					ClickID:   clickID,
+					OfferID:   offerID,
+					Country:   country,
+					PartnerID: partnerID,
+				}
+				offer := &domain.Offer{
+					ID:       offerID,
+					Payout:   payout,
+					IsActive: true,
+				}
+
+				f.repoClick.EXPECT().GetAllClicks(dto.ClickFilter{
+					ClickID: clickID,
+				}).Return([]*domain.Click{click})
+				f.repoOffer.EXPECT().GetOfferByID(offerID).Return(offer, nil)
+				f.repoPartner.EXPECT().GetPartnerByID(partnerID).Return(nil, errTest)
 			},
 		},
 	}
@@ -87,9 +215,13 @@ func TestCreateConversion(t *testing.T) {
 
 			e, err := uc.CreateConversion(tt.args.req)
 
-			a.ErrorIs(err, tt.wantErr)
-
-			a.Equal(tt.want, e)
+			if tt.wantErr {
+				a.Error(err)
+				a.Nil(e)
+			} else {
+				a.NoError(err)
+				a.Equal(tt.want, e)
+			}
 		})
 	}
 }

@@ -4,6 +4,7 @@ package mocks
 
 import (
 	domain "CPAPlatform/internal/domain"
+	dto "CPAPlatform/internal/domain/dto"
 
 	mock "github.com/stretchr/testify/mock"
 )
@@ -21,17 +22,17 @@ func (_m *RepoPayout) EXPECT() *RepoPayout_Expecter {
 	return &RepoPayout_Expecter{mock: &_m.Mock}
 }
 
-// GetAllPayouts provides a mock function with no fields
-func (_m *RepoPayout) GetAllPayouts() []*domain.Payout {
-	ret := _m.Called()
+// GetAllPayouts provides a mock function with given fields: filter
+func (_m *RepoPayout) GetAllPayouts(filter dto.PayoutFilter) []*domain.Payout {
+	ret := _m.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetAllPayouts")
 	}
 
 	var r0 []*domain.Payout
-	if rf, ok := ret.Get(0).(func() []*domain.Payout); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(dto.PayoutFilter) []*domain.Payout); ok {
+		r0 = rf(filter)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*domain.Payout)
@@ -47,13 +48,14 @@ type RepoPayout_GetAllPayouts_Call struct {
 }
 
 // GetAllPayouts is a helper method to define mock.On call
-func (_e *RepoPayout_Expecter) GetAllPayouts() *RepoPayout_GetAllPayouts_Call {
-	return &RepoPayout_GetAllPayouts_Call{Call: _e.mock.On("GetAllPayouts")}
+//   - filter dto.PayoutFilter
+func (_e *RepoPayout_Expecter) GetAllPayouts(filter interface{}) *RepoPayout_GetAllPayouts_Call {
+	return &RepoPayout_GetAllPayouts_Call{Call: _e.mock.On("GetAllPayouts", filter)}
 }
 
-func (_c *RepoPayout_GetAllPayouts_Call) Run(run func()) *RepoPayout_GetAllPayouts_Call {
+func (_c *RepoPayout_GetAllPayouts_Call) Run(run func(filter dto.PayoutFilter)) *RepoPayout_GetAllPayouts_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run()
+		run(args[0].(dto.PayoutFilter))
 	})
 	return _c
 }
@@ -63,113 +65,7 @@ func (_c *RepoPayout_GetAllPayouts_Call) Return(_a0 []*domain.Payout) *RepoPayou
 	return _c
 }
 
-func (_c *RepoPayout_GetAllPayouts_Call) RunAndReturn(run func() []*domain.Payout) *RepoPayout_GetAllPayouts_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetAllPayoutsByPartnerID provides a mock function with given fields: partnerID
-func (_m *RepoPayout) GetAllPayoutsByPartnerID(partnerID int64) []*domain.Payout {
-	ret := _m.Called(partnerID)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetAllPayoutsByPartnerID")
-	}
-
-	var r0 []*domain.Payout
-	if rf, ok := ret.Get(0).(func(int64) []*domain.Payout); ok {
-		r0 = rf(partnerID)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*domain.Payout)
-		}
-	}
-
-	return r0
-}
-
-// RepoPayout_GetAllPayoutsByPartnerID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetAllPayoutsByPartnerID'
-type RepoPayout_GetAllPayoutsByPartnerID_Call struct {
-	*mock.Call
-}
-
-// GetAllPayoutsByPartnerID is a helper method to define mock.On call
-//   - partnerID int64
-func (_e *RepoPayout_Expecter) GetAllPayoutsByPartnerID(partnerID interface{}) *RepoPayout_GetAllPayoutsByPartnerID_Call {
-	return &RepoPayout_GetAllPayoutsByPartnerID_Call{Call: _e.mock.On("GetAllPayoutsByPartnerID", partnerID)}
-}
-
-func (_c *RepoPayout_GetAllPayoutsByPartnerID_Call) Run(run func(partnerID int64)) *RepoPayout_GetAllPayoutsByPartnerID_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(int64))
-	})
-	return _c
-}
-
-func (_c *RepoPayout_GetAllPayoutsByPartnerID_Call) Return(_a0 []*domain.Payout) *RepoPayout_GetAllPayoutsByPartnerID_Call {
-	_c.Call.Return(_a0)
-	return _c
-}
-
-func (_c *RepoPayout_GetAllPayoutsByPartnerID_Call) RunAndReturn(run func(int64) []*domain.Payout) *RepoPayout_GetAllPayoutsByPartnerID_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetPayoutByID provides a mock function with given fields: payoutID
-func (_m *RepoPayout) GetPayoutByID(payoutID int64) (*domain.Payout, error) {
-	ret := _m.Called(payoutID)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetPayoutByID")
-	}
-
-	var r0 *domain.Payout
-	var r1 error
-	if rf, ok := ret.Get(0).(func(int64) (*domain.Payout, error)); ok {
-		return rf(payoutID)
-	}
-	if rf, ok := ret.Get(0).(func(int64) *domain.Payout); ok {
-		r0 = rf(payoutID)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*domain.Payout)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(int64) error); ok {
-		r1 = rf(payoutID)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// RepoPayout_GetPayoutByID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetPayoutByID'
-type RepoPayout_GetPayoutByID_Call struct {
-	*mock.Call
-}
-
-// GetPayoutByID is a helper method to define mock.On call
-//   - payoutID int64
-func (_e *RepoPayout_Expecter) GetPayoutByID(payoutID interface{}) *RepoPayout_GetPayoutByID_Call {
-	return &RepoPayout_GetPayoutByID_Call{Call: _e.mock.On("GetPayoutByID", payoutID)}
-}
-
-func (_c *RepoPayout_GetPayoutByID_Call) Run(run func(payoutID int64)) *RepoPayout_GetPayoutByID_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(int64))
-	})
-	return _c
-}
-
-func (_c *RepoPayout_GetPayoutByID_Call) Return(_a0 *domain.Payout, _a1 error) *RepoPayout_GetPayoutByID_Call {
-	_c.Call.Return(_a0, _a1)
-	return _c
-}
-
-func (_c *RepoPayout_GetPayoutByID_Call) RunAndReturn(run func(int64) (*domain.Payout, error)) *RepoPayout_GetPayoutByID_Call {
+func (_c *RepoPayout_GetAllPayouts_Call) RunAndReturn(run func(dto.PayoutFilter) []*domain.Payout) *RepoPayout_GetAllPayouts_Call {
 	_c.Call.Return(run)
 	return _c
 }

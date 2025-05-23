@@ -1,6 +1,7 @@
 package click_usecase
 
 import (
+	"CPAPlatform/internal/domain"
 	"CPAPlatform/internal/usecase/click_usecase/mocks"
 	"errors"
 	"testing"
@@ -23,10 +24,11 @@ func makeServiceWithMocks(t *testing.T) (s *UseCase, m useCaseMocks) {
 		timer:       mocks.NewTimer(t),
 	}
 	u := &UseCase{
-		repoPartner: m.repoPartner,
-		repoOffer:   m.repoOffer,
-		repoClick:   m.repoClick,
-		timer:       m.timer,
+		repoPartner:      m.repoPartner,
+		repoOffer:        m.repoOffer,
+		repoClick:        m.repoClick,
+		timer:            m.timer,
+		clickIDGenerator: domain.GenerateClickID,
 	}
 
 	return u, m

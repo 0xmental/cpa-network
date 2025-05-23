@@ -4,6 +4,7 @@ package mocks
 
 import (
 	domain "CPAPlatform/internal/domain"
+	dto "CPAPlatform/internal/domain/dto"
 
 	mock "github.com/stretchr/testify/mock"
 )
@@ -21,17 +22,17 @@ func (_m *ClickRepo) EXPECT() *ClickRepo_Expecter {
 	return &ClickRepo_Expecter{mock: &_m.Mock}
 }
 
-// GetAllClicks provides a mock function with no fields
-func (_m *ClickRepo) GetAllClicks() []*domain.Click {
-	ret := _m.Called()
+// GetAllClicks provides a mock function with given fields: filter
+func (_m *ClickRepo) GetAllClicks(filter dto.ClickFilter) []*domain.Click {
+	ret := _m.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetAllClicks")
 	}
 
 	var r0 []*domain.Click
-	if rf, ok := ret.Get(0).(func() []*domain.Click); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(dto.ClickFilter) []*domain.Click); ok {
+		r0 = rf(filter)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*domain.Click)
@@ -47,13 +48,14 @@ type ClickRepo_GetAllClicks_Call struct {
 }
 
 // GetAllClicks is a helper method to define mock.On call
-func (_e *ClickRepo_Expecter) GetAllClicks() *ClickRepo_GetAllClicks_Call {
-	return &ClickRepo_GetAllClicks_Call{Call: _e.mock.On("GetAllClicks")}
+//   - filter dto.ClickFilter
+func (_e *ClickRepo_Expecter) GetAllClicks(filter interface{}) *ClickRepo_GetAllClicks_Call {
+	return &ClickRepo_GetAllClicks_Call{Call: _e.mock.On("GetAllClicks", filter)}
 }
 
-func (_c *ClickRepo_GetAllClicks_Call) Run(run func()) *ClickRepo_GetAllClicks_Call {
+func (_c *ClickRepo_GetAllClicks_Call) Run(run func(filter dto.ClickFilter)) *ClickRepo_GetAllClicks_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run()
+		run(args[0].(dto.ClickFilter))
 	})
 	return _c
 }
@@ -63,161 +65,7 @@ func (_c *ClickRepo_GetAllClicks_Call) Return(_a0 []*domain.Click) *ClickRepo_Ge
 	return _c
 }
 
-func (_c *ClickRepo_GetAllClicks_Call) RunAndReturn(run func() []*domain.Click) *ClickRepo_GetAllClicks_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetAllClicksByOffer provides a mock function with given fields: offerID
-func (_m *ClickRepo) GetAllClicksByOffer(offerID int64) []*domain.Click {
-	ret := _m.Called(offerID)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetAllClicksByOffer")
-	}
-
-	var r0 []*domain.Click
-	if rf, ok := ret.Get(0).(func(int64) []*domain.Click); ok {
-		r0 = rf(offerID)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*domain.Click)
-		}
-	}
-
-	return r0
-}
-
-// ClickRepo_GetAllClicksByOffer_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetAllClicksByOffer'
-type ClickRepo_GetAllClicksByOffer_Call struct {
-	*mock.Call
-}
-
-// GetAllClicksByOffer is a helper method to define mock.On call
-//   - offerID int64
-func (_e *ClickRepo_Expecter) GetAllClicksByOffer(offerID interface{}) *ClickRepo_GetAllClicksByOffer_Call {
-	return &ClickRepo_GetAllClicksByOffer_Call{Call: _e.mock.On("GetAllClicksByOffer", offerID)}
-}
-
-func (_c *ClickRepo_GetAllClicksByOffer_Call) Run(run func(offerID int64)) *ClickRepo_GetAllClicksByOffer_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(int64))
-	})
-	return _c
-}
-
-func (_c *ClickRepo_GetAllClicksByOffer_Call) Return(_a0 []*domain.Click) *ClickRepo_GetAllClicksByOffer_Call {
-	_c.Call.Return(_a0)
-	return _c
-}
-
-func (_c *ClickRepo_GetAllClicksByOffer_Call) RunAndReturn(run func(int64) []*domain.Click) *ClickRepo_GetAllClicksByOffer_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetAllClicksByPartner provides a mock function with given fields: partnerID
-func (_m *ClickRepo) GetAllClicksByPartner(partnerID int64) []*domain.Click {
-	ret := _m.Called(partnerID)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetAllClicksByPartner")
-	}
-
-	var r0 []*domain.Click
-	if rf, ok := ret.Get(0).(func(int64) []*domain.Click); ok {
-		r0 = rf(partnerID)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*domain.Click)
-		}
-	}
-
-	return r0
-}
-
-// ClickRepo_GetAllClicksByPartner_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetAllClicksByPartner'
-type ClickRepo_GetAllClicksByPartner_Call struct {
-	*mock.Call
-}
-
-// GetAllClicksByPartner is a helper method to define mock.On call
-//   - partnerID int64
-func (_e *ClickRepo_Expecter) GetAllClicksByPartner(partnerID interface{}) *ClickRepo_GetAllClicksByPartner_Call {
-	return &ClickRepo_GetAllClicksByPartner_Call{Call: _e.mock.On("GetAllClicksByPartner", partnerID)}
-}
-
-func (_c *ClickRepo_GetAllClicksByPartner_Call) Run(run func(partnerID int64)) *ClickRepo_GetAllClicksByPartner_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(int64))
-	})
-	return _c
-}
-
-func (_c *ClickRepo_GetAllClicksByPartner_Call) Return(_a0 []*domain.Click) *ClickRepo_GetAllClicksByPartner_Call {
-	_c.Call.Return(_a0)
-	return _c
-}
-
-func (_c *ClickRepo_GetAllClicksByPartner_Call) RunAndReturn(run func(int64) []*domain.Click) *ClickRepo_GetAllClicksByPartner_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetByClickID provides a mock function with given fields: clickID
-func (_m *ClickRepo) GetByClickID(clickID string) (*domain.Click, error) {
-	ret := _m.Called(clickID)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetByClickID")
-	}
-
-	var r0 *domain.Click
-	var r1 error
-	if rf, ok := ret.Get(0).(func(string) (*domain.Click, error)); ok {
-		return rf(clickID)
-	}
-	if rf, ok := ret.Get(0).(func(string) *domain.Click); ok {
-		r0 = rf(clickID)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*domain.Click)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(string) error); ok {
-		r1 = rf(clickID)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// ClickRepo_GetByClickID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByClickID'
-type ClickRepo_GetByClickID_Call struct {
-	*mock.Call
-}
-
-// GetByClickID is a helper method to define mock.On call
-//   - clickID string
-func (_e *ClickRepo_Expecter) GetByClickID(clickID interface{}) *ClickRepo_GetByClickID_Call {
-	return &ClickRepo_GetByClickID_Call{Call: _e.mock.On("GetByClickID", clickID)}
-}
-
-func (_c *ClickRepo_GetByClickID_Call) Run(run func(clickID string)) *ClickRepo_GetByClickID_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(string))
-	})
-	return _c
-}
-
-func (_c *ClickRepo_GetByClickID_Call) Return(_a0 *domain.Click, _a1 error) *ClickRepo_GetByClickID_Call {
-	_c.Call.Return(_a0, _a1)
-	return _c
-}
-
-func (_c *ClickRepo_GetByClickID_Call) RunAndReturn(run func(string) (*domain.Click, error)) *ClickRepo_GetByClickID_Call {
+func (_c *ClickRepo_GetAllClicks_Call) RunAndReturn(run func(dto.ClickFilter) []*domain.Click) *ClickRepo_GetAllClicks_Call {
 	_c.Call.Return(run)
 	return _c
 }

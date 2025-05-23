@@ -1,8 +1,8 @@
 package payout_usecase
 
 import (
-	"CPAPlatform/internal/adapter/repository/payout_in_memory"
 	"CPAPlatform/internal/domain"
+	"CPAPlatform/internal/domain/dto"
 	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
@@ -30,7 +30,7 @@ func TestUpdatePayoutStatus(t *testing.T) {
 	tests := []struct {
 		name    string
 		want    *domain.Payout
-		wantErr error
+		wantErr bool
 		args    args
 		before  func(ucMocks useCaseMocks, args args)
 	}{
@@ -51,6 +51,7 @@ func TestUpdatePayoutStatus(t *testing.T) {
 				CreatedAt:    now,
 				UpdateAt:     updatedNow,
 			},
+			wantErr: false,
 			before: func(f useCaseMocks, args args) {
 				originalPayout := &domain.Payout{
 					ID:           payoutID,
@@ -72,12 +73,14 @@ func TestUpdatePayoutStatus(t *testing.T) {
 				}
 
 				f.timer.EXPECT().Now().Return(updatedNow)
-				f.repoPayout.EXPECT().GetPayoutByID(payoutID).Return(originalPayout, nil)
+				f.repoPayout.EXPECT().GetAllPayouts(dto.PayoutFilter{
+					PayoutID: payoutID,
+				}).Return([]*domain.Payout{originalPayout})
 				f.repoPayout.EXPECT().UpdatePayoutStatus(updatedPayout).Return(updatedPayout)
 			},
 		},
 		{
-			name: "failed update",
+			name: "payout not found",
 			args: args{
 				req: UpdatePayoutReq{
 					PayoutID: payoutID,
@@ -85,9 +88,56 @@ func TestUpdatePayoutStatus(t *testing.T) {
 				},
 			},
 			want:    nil,
-			wantErr: payout_in_memory.ErrPayoutNotFound,
+			wantErr: true,
 			before: func(f useCaseMocks, args args) {
-				f.repoPayout.EXPECT().GetPayoutByID(payoutID).Return(nil, payout_in_memory.ErrPayoutNotFound)
+				f.repoPayout.EXPECT().GetAllPayouts(dto.PayoutFilter{
+					PayoutID: payoutID,
+				}).Return([]*domain.Payout{})
+			},
+		},
+		{
+			name: "update to canceled status",
+			args: args{
+				req: UpdatePayoutReq{
+					PayoutID: payoutID,
+					Status:   domain.CanceledPayoutStatus,
+				},
+			},
+			want: &domain.Payout{
+				ID:           payoutID,
+				PartnerID:    partnerID,
+				WithdrawInfo: withdrawInfo,
+				Amount:       amount,
+				Status:       domain.CanceledPayoutStatus,
+				CreatedAt:    now,
+				UpdateAt:     updatedNow,
+			},
+			wantErr: false,
+			before: func(f useCaseMocks, args args) {
+				originalPayout := &domain.Payout{
+					ID:           payoutID,
+					PartnerID:    partnerID,
+					WithdrawInfo: withdrawInfo,
+					Amount:       amount,
+					Status:       statusOrigin,
+					CreatedAt:    now,
+					UpdateAt:     now,
+				}
+				updatedPayout := &domain.Payout{
+					ID:           payoutID,
+					PartnerID:    partnerID,
+					WithdrawInfo: withdrawInfo,
+					Amount:       amount,
+					Status:       domain.CanceledPayoutStatus,
+					CreatedAt:    now,
+					UpdateAt:     updatedNow,
+				}
+
+				f.timer.EXPECT().Now().Return(updatedNow)
+				f.repoPayout.EXPECT().GetAllPayouts(dto.PayoutFilter{
+					PayoutID: payoutID,
+				}).Return([]*domain.Payout{originalPayout})
+				f.repoPayout.EXPECT().UpdatePayoutStatus(updatedPayout).Return(updatedPayout)
 			},
 		},
 	}
@@ -102,9 +152,13 @@ func TestUpdatePayoutStatus(t *testing.T) {
 
 			e, err := uc.UpdatePayoutStatus(tt.args.req)
 
-			a.ErrorIs(err, tt.wantErr)
-
-			a.Equal(tt.want, e)
+			if tt.wantErr {
+				a.Error(err)
+				a.Nil(e)
+			} else {
+				a.NoError(err)
+				a.Equal(tt.want, e)
+			}
 		})
 	}
 }

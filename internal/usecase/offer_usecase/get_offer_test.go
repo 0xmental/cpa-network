@@ -1,7 +1,7 @@
 package offer_usecase
 
 import (
-	"CPAPlatform/internal/adapter/repository/offer_in_memory"
+	"CPAPlatform/internal/adapter/repository/in_memory/offer_in_memory"
 	"CPAPlatform/internal/domain"
 	"fmt"
 	"github.com/stretchr/testify/assert"
@@ -92,13 +92,10 @@ func TestGetOffer(t *testing.T) {
 			uc, ucMocks := makeServiceWithMocks(t)
 			tt.before(ucMocks, tt.args)
 
-			// Вызываем метод GetOffer
 			response, err := uc.GetOffer(tt.args.reqGetOffer)
 
-			// Проверяем ошибку
 			a.ErrorIs(err, tt.wantErr)
 
-			// Проверяем результат
 			a.Equal(tt.want, response)
 		})
 	}

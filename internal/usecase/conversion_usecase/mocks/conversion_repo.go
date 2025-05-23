@@ -4,6 +4,7 @@ package mocks
 
 import (
 	domain "CPAPlatform/internal/domain"
+	dto "CPAPlatform/internal/domain/dto"
 
 	mock "github.com/stretchr/testify/mock"
 )
@@ -21,17 +22,17 @@ func (_m *ConversionRepo) EXPECT() *ConversionRepo_Expecter {
 	return &ConversionRepo_Expecter{mock: &_m.Mock}
 }
 
-// GetAllConversions provides a mock function with no fields
-func (_m *ConversionRepo) GetAllConversions() []*domain.Conversion {
-	ret := _m.Called()
+// GetAllConversions provides a mock function with given fields: filter
+func (_m *ConversionRepo) GetAllConversions(filter dto.ConversionFilter) []*domain.Conversion {
+	ret := _m.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetAllConversions")
 	}
 
 	var r0 []*domain.Conversion
-	if rf, ok := ret.Get(0).(func() []*domain.Conversion); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(dto.ConversionFilter) []*domain.Conversion); ok {
+		r0 = rf(filter)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*domain.Conversion)
@@ -47,13 +48,14 @@ type ConversionRepo_GetAllConversions_Call struct {
 }
 
 // GetAllConversions is a helper method to define mock.On call
-func (_e *ConversionRepo_Expecter) GetAllConversions() *ConversionRepo_GetAllConversions_Call {
-	return &ConversionRepo_GetAllConversions_Call{Call: _e.mock.On("GetAllConversions")}
+//   - filter dto.ConversionFilter
+func (_e *ConversionRepo_Expecter) GetAllConversions(filter interface{}) *ConversionRepo_GetAllConversions_Call {
+	return &ConversionRepo_GetAllConversions_Call{Call: _e.mock.On("GetAllConversions", filter)}
 }
 
-func (_c *ConversionRepo_GetAllConversions_Call) Run(run func()) *ConversionRepo_GetAllConversions_Call {
+func (_c *ConversionRepo_GetAllConversions_Call) Run(run func(filter dto.ConversionFilter)) *ConversionRepo_GetAllConversions_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run()
+		run(args[0].(dto.ConversionFilter))
 	})
 	return _c
 }
@@ -63,103 +65,7 @@ func (_c *ConversionRepo_GetAllConversions_Call) Return(_a0 []*domain.Conversion
 	return _c
 }
 
-func (_c *ConversionRepo_GetAllConversions_Call) RunAndReturn(run func() []*domain.Conversion) *ConversionRepo_GetAllConversions_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetAllConversionsByOffer provides a mock function with given fields: offerID
-func (_m *ConversionRepo) GetAllConversionsByOffer(offerID int64) []*domain.Conversion {
-	ret := _m.Called(offerID)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetAllConversionsByOffer")
-	}
-
-	var r0 []*domain.Conversion
-	if rf, ok := ret.Get(0).(func(int64) []*domain.Conversion); ok {
-		r0 = rf(offerID)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*domain.Conversion)
-		}
-	}
-
-	return r0
-}
-
-// ConversionRepo_GetAllConversionsByOffer_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetAllConversionsByOffer'
-type ConversionRepo_GetAllConversionsByOffer_Call struct {
-	*mock.Call
-}
-
-// GetAllConversionsByOffer is a helper method to define mock.On call
-//   - offerID int64
-func (_e *ConversionRepo_Expecter) GetAllConversionsByOffer(offerID interface{}) *ConversionRepo_GetAllConversionsByOffer_Call {
-	return &ConversionRepo_GetAllConversionsByOffer_Call{Call: _e.mock.On("GetAllConversionsByOffer", offerID)}
-}
-
-func (_c *ConversionRepo_GetAllConversionsByOffer_Call) Run(run func(offerID int64)) *ConversionRepo_GetAllConversionsByOffer_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(int64))
-	})
-	return _c
-}
-
-func (_c *ConversionRepo_GetAllConversionsByOffer_Call) Return(_a0 []*domain.Conversion) *ConversionRepo_GetAllConversionsByOffer_Call {
-	_c.Call.Return(_a0)
-	return _c
-}
-
-func (_c *ConversionRepo_GetAllConversionsByOffer_Call) RunAndReturn(run func(int64) []*domain.Conversion) *ConversionRepo_GetAllConversionsByOffer_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetAllConversionsByPartner provides a mock function with given fields: partnerID
-func (_m *ConversionRepo) GetAllConversionsByPartner(partnerID int64) []*domain.Conversion {
-	ret := _m.Called(partnerID)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetAllConversionsByPartner")
-	}
-
-	var r0 []*domain.Conversion
-	if rf, ok := ret.Get(0).(func(int64) []*domain.Conversion); ok {
-		r0 = rf(partnerID)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*domain.Conversion)
-		}
-	}
-
-	return r0
-}
-
-// ConversionRepo_GetAllConversionsByPartner_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetAllConversionsByPartner'
-type ConversionRepo_GetAllConversionsByPartner_Call struct {
-	*mock.Call
-}
-
-// GetAllConversionsByPartner is a helper method to define mock.On call
-//   - partnerID int64
-func (_e *ConversionRepo_Expecter) GetAllConversionsByPartner(partnerID interface{}) *ConversionRepo_GetAllConversionsByPartner_Call {
-	return &ConversionRepo_GetAllConversionsByPartner_Call{Call: _e.mock.On("GetAllConversionsByPartner", partnerID)}
-}
-
-func (_c *ConversionRepo_GetAllConversionsByPartner_Call) Run(run func(partnerID int64)) *ConversionRepo_GetAllConversionsByPartner_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(int64))
-	})
-	return _c
-}
-
-func (_c *ConversionRepo_GetAllConversionsByPartner_Call) Return(_a0 []*domain.Conversion) *ConversionRepo_GetAllConversionsByPartner_Call {
-	_c.Call.Return(_a0)
-	return _c
-}
-
-func (_c *ConversionRepo_GetAllConversionsByPartner_Call) RunAndReturn(run func(int64) []*domain.Conversion) *ConversionRepo_GetAllConversionsByPartner_Call {
+func (_c *ConversionRepo_GetAllConversions_Call) RunAndReturn(run func(dto.ConversionFilter) []*domain.Conversion) *ConversionRepo_GetAllConversions_Call {
 	_c.Call.Return(run)
 	return _c
 }

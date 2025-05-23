@@ -2,6 +2,7 @@ package payout_usecase
 
 import (
 	"CPAPlatform/internal/domain"
+	"CPAPlatform/internal/domain/dto"
 	"time"
 )
 
@@ -13,10 +14,8 @@ type (
 	}
 
 	repoPayout interface {
+		GetAllPayouts(filter dto.PayoutFilter) []*domain.Payout
 		UpdatePayoutStatus(payout *domain.Payout) *domain.Payout
-		GetPayoutByID(payoutID int64) (*domain.Payout, error)
-		GetAllPayoutsByPartnerID(partnerID int64) []*domain.Payout
-		GetAllPayouts() []*domain.Payout
 		Save(payout *domain.Payout) *domain.Payout
 	}
 

@@ -127,7 +127,7 @@ func (_c *RepoPartner_GetPartnerByID_Call) RunAndReturn(run func(int64) (*domain
 }
 
 // Save provides a mock function with given fields: partner
-func (_m *RepoPartner) Save(partner *domain.Partner) *domain.Partner {
+func (_m *RepoPartner) Save(partner *domain.Partner) (*domain.Partner, error) {
 	ret := _m.Called(partner)
 
 	if len(ret) == 0 {
@@ -135,6 +135,10 @@ func (_m *RepoPartner) Save(partner *domain.Partner) *domain.Partner {
 	}
 
 	var r0 *domain.Partner
+	var r1 error
+	if rf, ok := ret.Get(0).(func(*domain.Partner) (*domain.Partner, error)); ok {
+		return rf(partner)
+	}
 	if rf, ok := ret.Get(0).(func(*domain.Partner) *domain.Partner); ok {
 		r0 = rf(partner)
 	} else {
@@ -143,7 +147,13 @@ func (_m *RepoPartner) Save(partner *domain.Partner) *domain.Partner {
 		}
 	}
 
-	return r0
+	if rf, ok := ret.Get(1).(func(*domain.Partner) error); ok {
+		r1 = rf(partner)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // RepoPartner_Save_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Save'
@@ -164,12 +174,12 @@ func (_c *RepoPartner_Save_Call) Run(run func(partner *domain.Partner)) *RepoPar
 	return _c
 }
 
-func (_c *RepoPartner_Save_Call) Return(_a0 *domain.Partner) *RepoPartner_Save_Call {
-	_c.Call.Return(_a0)
+func (_c *RepoPartner_Save_Call) Return(_a0 *domain.Partner, _a1 error) *RepoPartner_Save_Call {
+	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *RepoPartner_Save_Call) RunAndReturn(run func(*domain.Partner) *domain.Partner) *RepoPartner_Save_Call {
+func (_c *RepoPartner_Save_Call) RunAndReturn(run func(*domain.Partner) (*domain.Partner, error)) *RepoPartner_Save_Call {
 	_c.Call.Return(run)
 	return _c
 }

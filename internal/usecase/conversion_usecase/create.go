@@ -2,6 +2,7 @@ package conversion_usecase
 
 import (
 	"CPAPlatform/internal/domain"
+	"CPAPlatform/internal/domain/dto"
 	"errors"
 	"fmt"
 )
@@ -14,10 +15,15 @@ type CreateConversionRequest struct {
 }
 
 func (u *UseCase) CreateConversion(req CreateConversionRequest) (*domain.Conversion, error) {
-	click, err := u.repoClick.GetByClickID(req.ClickID)
-	if err != nil {
-		return nil, fmt.Errorf("repoClick.GetByClickID: %w", err)
+	clicks := u.repoClick.GetAllClicks(dto.ClickFilter{
+		ClickID: req.ClickID,
+	})
+	
+	if len(clicks) == 0 {
+		return nil, fmt.Errorf("click with ID %s not found", req.ClickID)
 	}
+	
+	click := clicks[0]
 
 	offer, err := u.repoOffer.GetOfferByID(click.OfferID)
 	if err != nil {
