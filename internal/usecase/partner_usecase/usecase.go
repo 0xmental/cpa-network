@@ -12,8 +12,8 @@ type (
 	}
 	repoPartner interface {
 		GetPartnerByID(partnerID int64) (*domain.Partner, error)
-		GetAllPartners() []*domain.Partner
-		Update(partner *domain.Partner) *domain.Partner
+		GetAllPartners() ([]*domain.Partner, error)
+		Update(partner *domain.Partner) (*domain.Partner, error)
 		Save(partner *domain.Partner) (*domain.Partner, error)
 	}
 
