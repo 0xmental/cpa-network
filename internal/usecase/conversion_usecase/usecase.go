@@ -2,6 +2,8 @@ package conversion_usecase
 
 import (
 	"CPAPlatform/internal/domain"
+	"CPAPlatform/internal/domain/dto"
+	"time"
 )
 
 type (
@@ -10,10 +12,11 @@ type (
 		repoOffer      offerRepo
 		repoPartner    partnerRepo
 		repoConversion conversionRepo
+		timer          timer
 	}
 
 	clickRepo interface {
-		GetByClickID(clickID string) (*domain.Click, error)
+		GetAllClicks(filter dto.ClickFilter) []*domain.Click
 	}
 
 	offerRepo interface {
@@ -26,18 +29,21 @@ type (
 
 	conversionRepo interface {
 		Save(conversion *domain.Conversion) *domain.Conversion
-		GetAllConversions() []*domain.Conversion
-		GetAllConversionsByOffer(offerID int64) []*domain.Conversion
-		GetAllConversionsByPartner(partnerID int64) []*domain.Conversion
+		GetAllConversions(filter dto.ConversionFilter) []*domain.Conversion
+	}
+
+	timer interface {
+		Now() time.Time
 	}
 )
 
 func NewUseCase(repoClick clickRepo, repoOffer offerRepo,
-	repoPartner partnerRepo, repoConversion conversionRepo) *UseCase {
+	repoPartner partnerRepo, repoConversion conversionRepo, timer timer) *UseCase {
 	return &UseCase{
 		repoClick:      repoClick,
 		repoOffer:      repoOffer,
 		repoPartner:    repoPartner,
 		repoConversion: repoConversion,
+		timer:          timer,
 	}
 }

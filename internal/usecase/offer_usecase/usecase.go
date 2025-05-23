@@ -1,10 +1,14 @@
 package offer_usecase
 
-import "CPAPlatform/internal/domain"
+import (
+	"CPAPlatform/internal/domain"
+	"time"
+)
 
 type (
 	UseCase struct {
 		offerRepo repoOffer
+		timer     timer
 	}
 
 	repoOffer interface {
@@ -13,10 +17,15 @@ type (
 		Save(offer *domain.Offer) *domain.Offer
 		Update(offer *domain.Offer) *domain.Offer
 	}
+
+	timer interface {
+		Now() time.Time
+	}
 )
 
-func NewUseCase(offerRepo repoOffer) *UseCase {
+func NewUseCase(offerRepo repoOffer, timer timer) *UseCase {
 	return &UseCase{
 		offerRepo: offerRepo,
+		timer:     timer,
 	}
 }

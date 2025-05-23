@@ -3,7 +3,6 @@ package click_usecase
 import (
 	"CPAPlatform/internal/domain"
 	"fmt"
-	"time"
 )
 
 type CreateClickRequest struct {
@@ -17,7 +16,7 @@ type CreateClickRequest struct {
 }
 
 func (u *UseCase) CreateClick(req CreateClickRequest) (*domain.Click, error) {
-	now := time.Now()
+	now := u.timer.Now()
 
 	partner, err := u.repoPartner.GetPartnerByID(req.PartnerID)
 	if err != nil {
